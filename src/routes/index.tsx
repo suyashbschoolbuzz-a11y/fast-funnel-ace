@@ -356,5 +356,20 @@ function Index() {
     <footer className="border-t border-border px-4 py-8 text-center text-xs text-muted-foreground">© 2026 The Content Desk · Daily marketing clarity on WhatsApp.</footer>
 
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/35 bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="gradient-text text-xl font-black">₹300</span> · 3 months</p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> ₹100/month equivalent</p></div><Button onClick={scrollToCheckout} className="cta-gradient h-12 shrink-0 px-5 font-black">Buy Now <ArrowRight /></Button></div></div>
+
+    <Dialog open={paymentResult !== null} onOpenChange={(open) => { if (!open) setPaymentResult(null); }}>
+      <DialogContent className="max-w-md border-accent/40 text-center shadow-neon">
+        {paymentResult?.paid ? <>
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-success text-success-foreground"><Check className="size-8" /></div>
+          <DialogTitle className="text-3xl font-black">Payment complete!</DialogTitle>
+          <DialogDescription className="text-base leading-7">Your three-month access is active. Join the private WhatsApp group now.</DialogDescription>
+          <Button asChild className="cta-gradient h-14 w-full text-base font-black"><a href={paymentResult.groupUrl} target="_blank" rel="noreferrer">Join WhatsApp Group <ArrowRight /></a></Button>
+        </> : <>
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-muted"><Clock3 className="size-8 text-primary" /></div>
+          <DialogTitle className="text-2xl font-black">Payment is still processing</DialogTitle>
+          <DialogDescription className="leading-7">We have not received a successful confirmation yet. If you paid, wait a moment and refresh this page.</DialogDescription>
+        </>}
+      </DialogContent>
+    </Dialog>
   </main>;
 }
