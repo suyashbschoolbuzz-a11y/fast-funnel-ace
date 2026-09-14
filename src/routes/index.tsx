@@ -218,7 +218,7 @@ function Index() {
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="Client feedback" title="Testimonials from the work" copy="Replace these cards with your strongest client messages or Instagram screenshots before launch." />
         <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-5 md:mx-0 md:grid md:grid-cols-6 md:overflow-visible md:px-0">
-          {testimonials.map((item, i) => <article key={item.name} className={`w-[82vw] shrink-0 snap-center rounded-lg border border-foreground/15 p-5 shadow-card md:w-auto ${i < 2 ? "md:col-span-3" : "md:col-span-2"} ${item.tone}`}>
+          {testimonials.map((item, i) => <article key={`${item.role}-${i}`} className={`w-[82vw] shrink-0 snap-center rounded-lg border border-foreground/15 p-5 shadow-card md:w-auto ${i < 2 ? "md:col-span-3" : "md:col-span-2"} ${item.tone}`}>
             <div className="mb-4 flex items-center justify-between"><div className="flex items-center gap-3"><div className="grid size-10 place-items-center rounded-full bg-foreground text-sm font-black text-background">{item.name[0]}</div><div><p className="text-sm font-black">{item.name}</p><p className="text-xs opacity-65">{item.role}</p></div></div><MessageCircleMore className="size-5 opacity-50" /></div>
             <p className="text-base font-semibold leading-7">“{item.text}”</p><div className="mt-5 inline-flex rounded-sm bg-foreground px-2.5 py-1.5 text-xs font-black text-background">{item.result}</div>
           </article>)}
