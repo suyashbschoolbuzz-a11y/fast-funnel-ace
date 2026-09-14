@@ -14,9 +14,34 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          access_months: number
+          id: string
+          offer_price_inr: number
+          updated_at: string
+          whatsapp_group_url: string
+        }
+        Insert: {
+          access_months?: number
+          id?: string
+          offer_price_inr?: number
+          updated_at?: string
+          whatsapp_group_url: string
+        }
+        Update: {
+          access_months?: number
+          id?: string
+          offer_price_inr?: number
+          updated_at?: string
+          whatsapp_group_url?: string
+        }
+        Relationships: []
+      }
       cashfree_orders: {
         Row: {
           access_expires_at: string | null
+          access_months: number
           amount_inr: number
           cf_order_id: string | null
           created_at: string
@@ -34,6 +59,7 @@ export type Database = {
         }
         Insert: {
           access_expires_at?: string | null
+          access_months?: number
           amount_inr?: number
           cf_order_id?: string | null
           created_at?: string
@@ -51,6 +77,7 @@ export type Database = {
         }
         Update: {
           access_expires_at?: string | null
+          access_months?: number
           amount_inr?: number
           cf_order_id?: string | null
           created_at?: string

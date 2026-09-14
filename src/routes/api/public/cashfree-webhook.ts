@@ -31,8 +31,10 @@ export const Route = createFileRoute("/api/public/cashfree-webhook")({
         if (!parsed.success) return new Response("Invalid payload", { status: 400 });
         const paid = parsed.data.data.payment.payment_status === "SUCCESS";
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: storedOrder } = await supabaseAdmin.from("cashfree_orders").select("access_months").eq("order_id", parsed.data.data.order.order_id).single();
+        const accessMonths = storedOrder?.access_months ?? 3;
         const update = paid
-          ? { status: "paid", paid_at: new Date().toISOString(), access_expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), last_webhook_at: new Date().toISOString() }
+          ? { status: "paid", paid_at: new Date().toISOString(), access_expires_at: new Date(Date.now() + accessMonths * 30 * 24 * 60 * 60 * 1000).toISOString(), last_webhook_at: new Date().toISOString() }
           : { last_webhook_at: new Date().toISOString() };
         const { error } = await supabaseAdmin.from("cashfree_orders").update(update).eq("order_id", parsed.data.data.order.order_id);
         if (error) {
