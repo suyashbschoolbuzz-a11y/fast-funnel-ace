@@ -261,7 +261,7 @@ function Index() {
       </div>
     </section>
 
-    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
+    <section className="reveal-on-scroll border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
       <div className="mx-auto max-w-5xl">
         <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
         <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
@@ -274,7 +274,7 @@ function Index() {
       </div>
     </section>
 
-    <section className="px-4 py-16 sm:py-24">
+    <section className="reveal-on-scroll px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="Client feedback" title="Testimonials from the work" copy="Replace these cards with your strongest client messages or Instagram screenshots before launch." />
         <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-5 md:mx-0 md:grid md:grid-cols-6 md:overflow-visible md:px-0">
@@ -287,7 +287,7 @@ function Index() {
       </div>
     </section>
 
-    <section className="px-4 py-16 sm:py-24">
+    <section className="reveal-on-scroll px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl"><SectionHeading eyebrow="Built for every niche" title="Different niches need different formats." />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[["Coaches", audienceCoach], ["Doctors", audienceDoctor], ["Ed-tech Brands", audienceEducation], ["F&B & Luxury", audienceLifestyle]].map(([label, image]) => <article key={label} className="group relative aspect-[4/5] overflow-hidden rounded-lg bg-muted">
@@ -299,7 +299,7 @@ function Index() {
       </div>
     </section>
 
-    <section className="border-y border-border bg-card px-4 py-16 sm:py-24">
+    <section className="reveal-on-scroll border-y border-border bg-card px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl"><SectionHeading eyebrow="Why this is different" title="Not another noisy tips group." copy="Daily direction designed to help you move from endless scrolling to clear, niche-specific action." />
         <div className="grid gap-4 md:grid-cols-2">
           <article className="rounded-lg border border-border bg-background p-6"><p className="text-xs font-black uppercase text-muted-foreground">Generic content groups</p><div className="mt-5 space-y-4">{["Random links without context", "One idea copied across every niche", "Advice that disappears in the noise", "No expert feedback loop"].map(item => <p key={item} className="flex gap-3 font-bold text-muted-foreground"><X className="size-5 shrink-0 text-primary" />{item}</p>)}</div></article>
@@ -308,12 +308,12 @@ function Index() {
       </div>
     </section>
 
-    <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Your daily rhythm" title="Fresh direction, delivered consistently." copy="Open WhatsApp, see what matters today, and turn it into content for your niche." />
+    <section className="reveal-on-scroll px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Your daily rhythm" title="Fresh direction, delivered consistently." copy="Open WhatsApp, see what matters today, and turn it into content for your niche." />
       <div className="grid gap-4 sm:grid-cols-3">{[["Morning", "11 AM idea drop", "Start with one clear content direction."], ["During the day", "Trend + format updates", "See how current conversations fit your niche."], ["Daily spotlight", "Profile audit", "Learn from practical feedback on one member account."]].map(([time,title,copy],i) => <article key={title} className="rounded-lg border border-border bg-card p-6 shadow-card"><span className="cta-gradient grid size-10 place-items-center rounded-md font-black">0{i+1}</span><p className="mt-5 text-xs font-black uppercase text-accent">{time}</p><h3 className="mt-1 text-xl font-black">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></article>)}</div>
       <BuyNowBand title="One focused message can unlock your next post." />
     </div></section>
 
-    <section className="border-y border-primary/20 bg-price px-4 py-16 sm:py-24">
+    <section className="reveal-on-scroll border-y border-primary/20 bg-price px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple 3-month access" title="₹100 a month, paid once as ₹300." />
         <div className="grid gap-4 md:grid-cols-3">
           {[["Daily Trend Research", "₹999", "Instagram trends and viral topics filtered for relevance."], ["Daily Content Direction", "₹1,499", "An 11 AM idea plus formats suited to your niche."], ["Profile Audit Access", "₹1,999", "Daily practical feedback the whole group can learn from."]] .map(([name, value, copy], i) => <article key={name} className="rounded-lg border border-foreground/15 bg-background p-6 shadow-card"><span className="grid size-10 place-items-center rounded-md bg-accent font-black">0{i+1}</span><h3 className="mt-5 text-xl font-black">{name}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p><p className="mt-5 text-sm font-bold">Value <span className="line-through">{value}</span> <span className="ml-2 text-success">INCLUDED</span></p></article>)}
@@ -327,7 +327,7 @@ function Index() {
       </div>
     </section>
 
-    <section className="px-4 py-16 sm:py-24">
+    <section className="reveal-on-scroll px-4 py-16 sm:py-24">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.82fr_1.18fr] lg:gap-16">
         <div className="relative mx-auto max-w-md"><div className="absolute -right-3 -top-3 z-10 rotate-3 rounded-md bg-accent px-3 py-2 text-xs font-black">AGENCY-LED INSIGHTS</div><img src={mentorPhoto} loading="lazy" width={1024} height={1280} alt="Agency owner and content strategist in his studio" className="aspect-[4/5] w-full rounded-lg border-4 border-foreground object-cover shadow-editorial" /></div>
         <div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">About me</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Six years. 100+ accounts. Lessons from almost every niche.</h2>
@@ -341,15 +341,15 @@ function Index() {
       </div>
     </section>
 
-    <section aria-label="Featured publications" className="border-y border-border bg-muted py-7"><p className="mb-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Experience across niches</p><div className="marquee-mask overflow-hidden"><div className="flex w-max animate-marquee gap-14 px-7 text-xl font-black text-muted-foreground/70">{["COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B", "COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B"].map((x,i) => <span key={`${x}-${i}`} className="whitespace-nowrap">{x}</span>)}</div></div></section>
+    <section aria-label="Featured publications" className="reveal-on-scroll border-y border-border bg-muted py-7"><p className="mb-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Experience across niches</p><div className="marquee-mask overflow-hidden"><div className="flex w-max animate-marquee gap-14 px-7 text-xl font-black text-muted-foreground/70">{["COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B", "COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B"].map((x,i) => <span key={`${x}-${i}`} className="whitespace-nowrap">{x}</span>)}</div></div></section>
 
-    <section className="relative overflow-hidden border-y border-primary/30 bg-surface-dark px-4 py-16 sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10 text-primary" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-accent">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>3-MONTH OFFER</span><span>₹300 ONE TIME</span></div><div className="h-4 overflow-hidden rounded-full bg-muted"><div className="cta-gradient h-full w-[86%] rounded-full" /></div><p className="mt-2 text-right text-xs font-bold text-primary">Limited founding memberships available</p><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Price may increase soon</span><span className="urgency"><Users /> Private WhatsApp group</span><span className="urgency"><Gift /> No automatic renewal</span></div><CtaButton className="mt-8" /></div></div></section>
+    <section className="reveal-on-scroll relative overflow-hidden border-y border-primary/30 bg-surface-dark px-4 py-16 sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10 text-primary" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-accent">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>3-MONTH OFFER</span><span>₹300 ONE TIME</span></div><div className="h-4 overflow-hidden rounded-full bg-muted"><div className="cta-gradient h-full w-[86%] rounded-full" /></div><p className="mt-2 text-right text-xs font-bold text-primary">Limited founding memberships available</p><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Price may increase soon</span><span className="urgency"><Users /> Private WhatsApp group</span><span className="urgency"><Gift /> No automatic renewal</span></div><CtaButton className="mt-8" /></div></div></section>
 
-    <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple from here" title="What happens next?" /><div className="grid gap-3 md:grid-cols-5">{[["Register", "Share your details"], ["Pay ₹300", "Get three months access"], ["Confirm", "See payment complete"], ["Join", "Open the private group link"], ["Create", "Use your first daily idea"]].map(([title, copy], i) => <article key={title} className="relative rounded-lg border border-border p-5"><span className="text-4xl font-black text-primary/25">0{i+1}</span><h3 className="mt-4 font-black">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{copy}</p>{i < 4 && <ArrowRight className="absolute -right-3 top-8 z-10 hidden size-5 text-primary md:block" />}</article>)}</div></div></section>
+    <section className="reveal-on-scroll px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple from here" title="What happens next?" /><div className="grid gap-3 md:grid-cols-5">{[["Register", "Share your details"], ["Pay ₹300", "Get three months access"], ["Confirm", "See payment complete"], ["Join", "Open the private group link"], ["Create", "Use your first daily idea"]].map(([title, copy], i) => <article key={title} className="relative rounded-lg border border-border p-5"><span className="text-4xl font-black text-primary/25">0{i+1}</span><h3 className="mt-4 font-black">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{copy}</p>{i < 4 && <ArrowRight className="absolute -right-3 top-8 z-10 hidden size-5 text-primary md:block" />}</article>)}</div></div></section>
 
-    <section className="bg-card px-4 py-16 sm:py-24"><div className="mx-auto max-w-3xl"><SectionHeading eyebrow="No doubts left behind" title="Frequently asked questions" /><Accordion type="single" collapsible className="rounded-lg border border-border bg-background px-5 sm:px-7">{faqs.map(([q,a],i) => <AccordionItem value={`faq-${i}`} key={q}><AccordionTrigger className="py-5 text-base font-black hover:no-underline">{q}</AccordionTrigger><AccordionContent className="text-sm leading-7 text-muted-foreground">{a}</AccordionContent></AccordionItem>)}</Accordion><BuyNowBand title="Ready for your next clear content idea?" /></div></section>
+    <section className="reveal-on-scroll bg-card px-4 py-16 sm:py-24"><div className="mx-auto max-w-3xl"><SectionHeading eyebrow="No doubts left behind" title="Frequently asked questions" /><Accordion type="single" collapsible className="rounded-lg border border-border bg-background px-5 sm:px-7">{faqs.map(([q,a],i) => <AccordionItem value={`faq-${i}`} key={q}><AccordionTrigger className="py-5 text-base font-black hover:no-underline">{q}</AccordionTrigger><AccordionContent className="text-sm leading-7 text-muted-foreground">{a}</AccordionContent></AccordionItem>)}</Accordion><BuyNowBand title="Ready for your next clear content idea?" /></div></section>
 
-    <section id="checkout" className="scroll-mt-4 px-4 py-16 sm:py-24"><div className="mx-auto grid max-w-5xl overflow-hidden rounded-lg border-2 border-foreground bg-background shadow-editorial lg:grid-cols-[.85fr_1.15fr]">
+    <section id="checkout" className="reveal-on-scroll scroll-mt-4 px-4 py-16 sm:py-24"><div className="mx-auto grid max-w-5xl overflow-hidden rounded-lg border-2 border-foreground bg-background shadow-editorial lg:grid-cols-[.85fr_1.15fr]">
       <div className="bg-surface-dark p-7 text-foreground sm:p-10"><p className="text-xs font-black uppercase tracking-[0.18em] text-accent">Final step</p><h2 className="mt-3 text-4xl font-black leading-tight">Your strategist is one tap away.</h2><p className="mt-4 leading-7 text-muted-foreground">Join the WhatsApp group that turns daily Instagram change into clear content direction.</p><div className="my-7 border-y border-border py-6"><div className="flex items-end justify-between"><div><p className="text-sm text-muted-foreground line-through">₹13,491 value</p><p className="gradient-text text-5xl font-black">₹300</p><p className="text-xs font-bold uppercase text-muted-foreground">one time · 3 months</p></div><span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">₹100 / MONTH</span></div></div><ul className="space-y-3 text-sm font-bold">{["Daily trend updates", "11 AM content idea", "Niche-specific formats", "Daily profile audit"].map(x => <li key={x} className="flex gap-2"><CheckCircle2 className="size-5 text-accent" />{x}</li>)}</ul><div className="mt-7 grid grid-cols-2 gap-3 border-t border-border pt-6 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-2"><Target className="size-4 text-primary" /> Niche-specific</span><span className="flex items-center gap-2"><TrendingUp className="size-4 text-accent" /> Daily updates</span></div></div>
       <div className="p-7 sm:p-10"><form onSubmit={submitRegistration} noValidate>
         <h3 className="text-2xl font-black">Reserve your spot</h3><p className="mt-1 text-sm text-muted-foreground">Takes less than 60 seconds.</p>
@@ -369,7 +369,7 @@ function Index() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/35 bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="gradient-text text-xl font-black">₹300</span> · 3 months</p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> ₹100/month equivalent</p></div><Button onClick={scrollToCheckout} className="cta-gradient h-12 shrink-0 px-5 font-black">Buy Now <ArrowRight /></Button></div></div>
 
     {paymentResult && <div className="fixed inset-0 z-[70] grid place-items-center bg-background/85 p-4 backdrop-blur-sm" role="presentation" onMouseDown={() => setPaymentResult(null)}>
-      <section role="dialog" aria-modal="true" aria-labelledby="payment-result-title" className="relative w-full max-w-md rounded-lg border border-accent/40 bg-background p-6 text-center shadow-neon" onMouseDown={(event) => event.stopPropagation()}>
+      <section role="dialog" aria-modal="true" aria-labelledby="payment-result-title" className="reveal-on-scroll relative w-full max-w-md rounded-lg border border-accent/40 bg-background p-6 text-center shadow-neon" onMouseDown={(event) => event.stopPropagation()}>
         <Button type="button" variant="ghost" size="icon" aria-label="Close payment result" className="absolute right-3 top-3" onClick={() => setPaymentResult(null)}><X className="size-5" /></Button>
         {paymentResult.paid ? <>
           <div className="mx-auto grid size-16 place-items-center rounded-full bg-success text-success-foreground"><Check className="size-8" /></div>

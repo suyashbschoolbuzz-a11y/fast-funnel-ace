@@ -1,0 +1,2 @@
+CREATE POLICY "Server only cashfree orders" ON public.cashfree_orders FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "Server only app settings" ON public.app_settings FOR ALL TO service_role USING (true) WITH CHECK (true);
