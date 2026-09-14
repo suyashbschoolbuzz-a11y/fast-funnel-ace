@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cashfree_orders: {
+        Row: {
+          access_expires_at: string | null
+          amount_inr: number
+          cf_order_id: string | null
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          last_webhook_at: string | null
+          order_id: string
+          paid_at: string | null
+          payment_session_id: string | null
+          status: string
+          tracking: Json
+          updated_at: string
+        }
+        Insert: {
+          access_expires_at?: string | null
+          amount_inr?: number
+          cf_order_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          last_webhook_at?: string | null
+          order_id: string
+          paid_at?: string | null
+          payment_session_id?: string | null
+          status?: string
+          tracking?: Json
+          updated_at?: string
+        }
+        Update: {
+          access_expires_at?: string | null
+          amount_inr?: number
+          cf_order_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          last_webhook_at?: string | null
+          order_id?: string
+          paid_at?: string | null
+          payment_session_id?: string | null
+          status?: string
+          tracking?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
