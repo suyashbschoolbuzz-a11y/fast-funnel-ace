@@ -250,6 +250,19 @@ function Index() {
       </div>
     </section>
 
+    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
+      <div className="mx-auto max-w-5xl">
+        <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
+        <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
+          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-accent/20 bg-card px-5 sm:px-7">
+            <AccordionTrigger className="py-6 text-left text-foreground hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="cta-gradient grid size-10 shrink-0 place-items-center rounded-md font-black">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
+            <AccordionContent className="pb-6 pl-14 text-muted-foreground"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
+          </AccordionItem>)}
+        </Accordion>
+        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure one-time checkout · 3 months WhatsApp access</p></div>
+      </div>
+    </section>
+
     <section className="px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="Client feedback" title="Testimonials from the work" copy="Replace these cards with your strongest client messages or Instagram screenshots before launch." />
@@ -263,24 +276,11 @@ function Index() {
       </div>
     </section>
 
-    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
-      <div className="mx-auto max-w-5xl">
-        <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
-        <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
-          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-accent/20 bg-card px-5 sm:px-7">
-            <AccordionTrigger className="py-6 text-left text-foreground hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="cta-gradient grid size-10 shrink-0 place-items-center rounded-md font-black">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
-            <AccordionContent className="pb-6 pl-14 text-muted-foreground"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
-          </AccordionItem>)}
-        </Accordion>
-        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure monthly checkout · WhatsApp access details</p></div>
-      </div>
-    </section>
-
     <section className="px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl"><SectionHeading eyebrow="Built for every niche" title="Different niches need different formats." />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {["Coaches", "Doctors", "Ed-tech Brands", "F&B & Luxury"].map((label, i) => <article key={label} className="group relative aspect-[4/5] overflow-hidden rounded-lg bg-muted">
-            <img src={audiencePhoto} loading="lazy" width={1536} height={1024} alt={`${label} building their creator skills`} className="h-full w-full scale-[1.8] object-cover transition-transform duration-500 group-hover:scale-[1.9]" style={{ objectPosition: `${10 + i * 28}% center` }} />
+          {[["Coaches", audienceCoach], ["Doctors", audienceDoctor], ["Ed-tech Brands", audienceEducation], ["F&B & Luxury", audienceLifestyle]].map(([label, image]) => <article key={label} className="group relative aspect-[4/5] overflow-hidden rounded-lg bg-muted">
+            <img src={image} loading="lazy" width={1024} height={1280} alt={`${label} creating social media content`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-image-label p-4 text-foreground"><p className="text-lg font-black sm:text-2xl">{label}</p><p className="mt-1 hidden text-xs text-foreground/75 sm:block">Get strategy built for your category.</p></div>
           </article>)}
         </div>
