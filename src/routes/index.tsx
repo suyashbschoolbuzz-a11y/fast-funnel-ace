@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { load } from "@cashfreepayments/cashfree-js";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight,
@@ -11,7 +13,6 @@ import {
   Gift,
   LockKeyhole,
   MessageCircleMore,
-  Play,
   ShieldCheck,
   Sparkles,
   Star,
@@ -25,6 +26,11 @@ import {
 import { z } from "zod";
 
 import audiencePhoto from "@/assets/audience.jpg";
+import audienceCoach from "@/assets/audience-coach.jpg";
+import audienceDoctor from "@/assets/audience-doctor.jpg";
+import audienceEducation from "@/assets/audience-education.jpg";
+import audienceLifestyle from "@/assets/audience-lifestyle.jpg";
+import whatsappMarketingHero from "@/assets/whatsapp-marketing-hero.jpg";
 import mentorPhoto from "@/assets/mentor.jpg";
 import {
   Accordion,
@@ -36,19 +42,21 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { createCashfreeOrder, verifyCashfreeOrder } from "@/lib/cashfree.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Daily Marketing Strategist — ₹100/Month" },
+      { title: "Daily Marketing Strategist — ₹300 for 3 Months" },
       {
         name: "description",
-        content: "Get daily Instagram trends, niche-specific content ideas and profile audits inside one focused WhatsApp group for ₹100 a month.",
+        content: "Get daily Instagram trends, niche-specific content ideas and profile audits inside one focused WhatsApp group for ₹300 for three months.",
       },
-      { property: "og:title", content: "Daily Marketing Strategist — ₹100/Month" },
+      { property: "og:title", content: "Daily Marketing Strategist — ₹300 for 3 Months" },
       {
         property: "og:description",
-        content: "Your marketing strategist on WhatsApp for ₹100 a month.",
+        content: "Your marketing strategist on WhatsApp for ₹300 for three months.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -61,7 +69,7 @@ const registrationSchema = z.object({
   name: z.string().trim().min(2, "Please enter your full name"),
   email: z.string().trim().email("Please enter a valid email"),
   whatsapp: z.string().regex(/^\d{10}$/, "Enter a valid 10-digit WhatsApp number"),
-    terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
+  terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
 });
 
 const testimonials = [
@@ -81,18 +89,18 @@ const curriculum = [
 ];
 
 const faqs = [
-  ["What exactly do I get for ₹100 a month?", "You join the private WhatsApp group and receive daily Instagram trend updates, niche-specific applications, format suggestions, an 11 AM content idea and access to the daily audit series."],
+  ["What exactly do I get for ₹300?", "You get three months in the private WhatsApp group and receive daily Instagram trend updates, niche-specific applications, format suggestions, an 11 AM content idea and access to the daily audit series."],
   ["Will the ideas work for my niche?", "The group is built around adapting trends and formats to different niches instead of sending everyone the same generic advice."],
   ["How does the free profile audit work?", "One Instagram profile from the group is selected for an audit each day. Every member can learn from the feedback shared."],
   ["When will I receive the daily content idea?", "A fresh content idea is shared every morning at 11 AM in the WhatsApp group."],
-  ["Can I cancel later?", "Yes. This is a monthly membership, so you can choose not to renew for the next month."],
+  ["Is this a recurring payment?", "No. ₹300 is charged once and gives you three full months of access. There is no automatic monthly renewal."],
 ];
 
 function scrollToCheckout() {
   document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function CtaButton({ className = "", children = "Buy Now — ₹100/Month" }: { className?: string; children?: ReactNode }) {
+function CtaButton({ className = "", children = "Buy Now — ₹300 for 3 Months" }: { className?: string; children?: ReactNode }) {
   return (
     <Button onClick={scrollToCheckout} className={`cta-gradient h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
       {children}<ArrowRight className="size-5" />
@@ -102,7 +110,7 @@ function CtaButton({ className = "", children = "Buy Now — ₹100/Month" }: { 
 
 function BuyNowBand({ title = "Stop guessing what to post tomorrow." }: { title?: string }) {
   return <div className="mx-auto mt-10 max-w-4xl rounded-lg border border-primary/40 bg-surface-dark p-5 shadow-neon sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-7">
-    <div><p className="text-xs font-black uppercase text-accent">Founding access · ₹100/month</p><p className="mt-1 text-xl font-black text-foreground sm:text-2xl">{title}</p></div>
+    <div><p className="text-xs font-black uppercase text-accent">3 months access · ₹100/month</p><p className="mt-1 text-xl font-black text-foreground sm:text-2xl">{title}</p></div>
     <CtaButton className="mt-5 w-full shrink-0 sm:mt-0 sm:w-auto" />
   </div>;
 }
