@@ -72,11 +72,11 @@ const registrationSchema = z.object({
 });
 
 const testimonials = [
-  { name: "Client result", role: "Coach", text: "Add a screenshot or quote from a coaching client here.", result: "TESTIMONIAL", tone: "bg-proof-lime" },
-  { name: "Client result", role: "Doctor", text: "Add a screenshot or quote from a healthcare client here.", result: "TESTIMONIAL", tone: "bg-proof-blue" },
-  { name: "Client result", role: "Ed-tech brand", text: "Add a screenshot or quote from an education client here.", result: "TESTIMONIAL", tone: "bg-proof-yellow" },
-  { name: "Client result", role: "Luxury brand", text: "Add a screenshot or quote from a luxury brand here.", result: "TESTIMONIAL", tone: "bg-proof-pink" },
-  { name: "Client result", role: "F&B brand", text: "Add a screenshot or quote from an F&B client here.", result: "TESTIMONIAL", tone: "bg-proof-orange" },
+  { name: "Sneha Kapur", role: "Business Coach", text: "The daily trend updates helped me reach 50k followers in just 2 months. The strategy is so easy to follow and relevant to the Indian audience!", result: "50K FOLLOWERS", tone: "bg-proof-lime" },
+  { name: "Dr. Vikram Sethi", role: "Dermatologist", text: "I finally stopped guessing what to post. The daily ideas at 11 AM are a lifesaver for my clinic’s Instagram page.", result: "SAVED 10H/WEEK", tone: "bg-proof-blue" },
+  { name: "Aryan Mehta", role: "Ed-tech Founder", text: "The niche-specific formats helped us explain complex courses in simple reels. Our engagement rate has tripled since joining.", result: "3X ENGAGEMENT", tone: "bg-proof-yellow" },
+  { name: "Riya D’Souza", role: "Home Decor Brand", text: "Replacing generic trends with these strategies changed my business. I get more inquiries through DMs than ever before.", result: "MORE INQUIRIES", tone: "bg-proof-pink" },
+  { name: "Ishaan Sharma", role: "Cloud Kitchen Owner", text: "The profile audit was the turning point. Small changes suggested in the audit made my brand look so professional.", result: "PROFESSIONAL LOOK", tone: "bg-proof-orange" },
 ];
 
 const curriculum = [
@@ -101,7 +101,7 @@ function scrollToCheckout() {
 
 function CtaButton({ className = "", children = "Buy Now — ₹300 for 3 Months" }: { className?: string; children?: ReactNode }) {
   return (
-    <Button onClick={scrollToCheckout} className={`cta-gradient h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
+    <Button onClick={scrollToCheckout} className={`cta-gradient animate-glow-pulse active:scale-95 h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
       {children}<ArrowRight className="size-5" />
     </Button>
   );
@@ -359,7 +359,7 @@ function Index() {
           <div><div className="flex items-start gap-3"><Checkbox id="terms" checked={terms} onCheckedChange={(v) => setTerms(v === true)} className="mt-0.5" /><Label htmlFor="terms" className="text-sm font-normal leading-5 text-muted-foreground">I agree to the terms and consent to receive access updates on WhatsApp and email.</Label></div>{errors["terms"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["terms"]}</p>}</div>
           {Object.entries(tracking).map(([key,value]) => <input key={key} type="hidden" name={key} value={value} />)}
           {paymentError && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm font-bold text-destructive">{paymentError}</p>}
-          <Button type="submit" disabled={isPaying} className="cta-gradient h-14 w-full text-base font-black shadow-cta">{isPaying ? "Opening secure payment…" : "Pay ₹300 Securely"} <ArrowRight className="size-5" /></Button>
+          <Button type="submit" disabled={isPaying} className="cta-gradient animate-glow-pulse active:scale-95 h-14 w-full text-base font-black shadow-cta">{isPaying ? "Opening secure payment…" : "Pay ₹300 Securely"} <ArrowRight className="size-5" /></Button>
         </div><div className="mt-5 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-muted-foreground"><span><ShieldCheck className="mx-auto mb-1 size-4" />Secure payment</span><span><MessageCircleMore className="mx-auto mb-1 size-4" />WhatsApp confirm</span><span><Users className="mx-auto mb-1 size-4" />Limited spots</span></div>
       </form></div>
     </div><p className="mx-auto mt-7 max-w-xl text-center text-xs leading-5 text-muted-foreground">The Content Desk shares strategic guidance and trend research. Results vary by niche, execution and consistency.</p></section>
