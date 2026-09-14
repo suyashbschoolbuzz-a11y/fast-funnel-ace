@@ -151,10 +151,14 @@ function CountUp({ end, suffix = "", label }: { end: number; suffix?: string; la
 }
 
 function Index() {
-  const [submitted, setSubmitted] = useState(false);
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [isPaying, setIsPaying] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentResult, setPaymentResult] = useState<{ paid: boolean; groupUrl?: string; status?: string } | null>(null);
+  const createOrder = useServerFn(createCashfreeOrder);
+  const verifyOrder = useServerFn(verifyCashfreeOrder);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -163,9 +167,17 @@ function Index() {
       if (key.startsWith("utm_") || key === "fbclid") kept[key] = value;
     });
     setTracking(kept);
-  }, []);
+    const returnedOrderId = params.get("cashfree_order_id");
+    if (returnedOrderId) {
+      setIsPaying(true);
+      verifyOrder({ data: { orderId: returnedOrderId } })
+        .then((result) => setPaymentResult(result))
+        .catch(() => setPaymentError("We could not verify your payment yet. Please try again shortly."))
+        .finally(() => setIsPaying(false));
+    }
+  }, [verifyOrder]);
 
-  function submitRegistration(event: FormEvent<HTMLFormElement>) {
+  async function submitRegistration(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const result = registrationSchema.safeParse({
@@ -177,10 +189,18 @@ function Index() {
       setErrors(next);
       return;
     }
-    // Tracking parameters are ready to send with the lead when a checkout endpoint is connected.
-    void { ...result.data, ...tracking };
     setErrors({});
-    setSubmitted(true);
+    setPaymentError("");
+    setIsPaying(true);
+    try {
+      const order = await createOrder({ data: { name: result.data.name, email: result.data.email, whatsapp: result.data.whatsapp, tracking } });
+      const cashfree = await load({ mode: order.mode });
+      await cashfree.checkout({ paymentSessionId: order.paymentSessionId, redirectTarget: "_self" });
+    } catch (error) {
+      console.error(error);
+      setPaymentError("Payment could not be started. Please check your details and try again.");
+      setIsPaying(false);
+    }
   }
 
   return <main className="overflow-hidden bg-background pb-24 text-foreground md:pb-0">
@@ -191,7 +211,7 @@ function Index() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-9 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 font-black"><span className="cta-gradient grid size-9 place-items-center rounded-md"><Zap className="size-5 fill-current" /></span>THE CONTENT DESK</div>
-          <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-card px-3 py-2 text-xs font-bold shadow-neon"><span className="size-2 animate-pulse rounded-full bg-success" /> ₹100 offer live</div>
+          <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-card px-3 py-2 text-xs font-bold shadow-neon"><span className="size-2 animate-pulse rounded-full bg-success" /> ₹300 · 3 months</div>
         </div>
 
         <div className="grid items-center gap-10 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
@@ -205,7 +225,7 @@ function Index() {
             </div>
             <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <CtaButton className="w-full sm:w-auto" />
-              <p className="text-sm font-bold text-muted-foreground">Less than ₹4 a day · <span className="text-xl text-primary">₹100/month</span></p>
+              <p className="text-sm font-bold text-muted-foreground">Less than ₹4 a day · <span className="text-xl text-primary">₹300 one time</span></p>
             </div>
             <div className="mt-6 flex items-center justify-center gap-3 lg:justify-start">
               <div className="flex -space-x-3">
@@ -216,12 +236,10 @@ function Index() {
           </div>
 
           <div className="relative">
-            <div className="absolute -left-3 -top-3 z-10 rotate-[-4deg] rounded-md bg-primary px-4 py-2 text-xs font-black uppercase text-primary-foreground shadow-lg">Watch this first</div>
+            <div className="absolute -left-3 -top-3 z-10 rotate-[-4deg] rounded-md bg-primary px-4 py-2 text-xs font-black uppercase text-primary-foreground shadow-lg">Daily clarity on WhatsApp</div>
             <div className="overflow-hidden rounded-lg border border-accent/50 bg-card shadow-neon">
-              <div className="aspect-video">
-                <iframe className="h-full w-full" src="https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0&modestbranding=1" title="WhatsApp marketing strategist preview" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-              </div>
-              <div className="flex items-center justify-between gap-3 px-4 py-3 text-foreground"><span className="flex items-center gap-2 text-sm font-bold"><Play className="size-4 fill-current" /> See how the group works</span><span className="text-xs text-muted-foreground">Trends. Ideas. Audits.</span></div>
+              <img src={whatsappMarketingHero} width={1536} height={1024} alt="Small business owner receiving daily marketing guidance on her phone" className="aspect-[3/2] w-full object-cover" />
+              <div className="flex items-center justify-between gap-3 px-4 py-3 text-foreground"><span className="flex items-center gap-2 text-sm font-bold"><MessageCircleMore className="size-4" /> Strategy where you already work</span><span className="text-xs text-muted-foreground">Trends. Ideas. Audits.</span></div>
             </div>
           </div>
         </div>
