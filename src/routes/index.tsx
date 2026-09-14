@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { load } from "@cashfreepayments/cashfree-js";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight,
@@ -11,7 +13,6 @@ import {
   Gift,
   LockKeyhole,
   MessageCircleMore,
-  Play,
   ShieldCheck,
   Sparkles,
   Star,
@@ -25,6 +26,11 @@ import {
 import { z } from "zod";
 
 import audiencePhoto from "@/assets/audience.jpg";
+import audienceCoach from "@/assets/audience-coach.jpg";
+import audienceDoctor from "@/assets/audience-doctor.jpg";
+import audienceEducation from "@/assets/audience-education.jpg";
+import audienceLifestyle from "@/assets/audience-lifestyle.jpg";
+import whatsappMarketingHero from "@/assets/whatsapp-marketing-hero.jpg";
 import mentorPhoto from "@/assets/mentor.jpg";
 import {
   Accordion,
@@ -36,19 +42,21 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { createCashfreeOrder, verifyCashfreeOrder } from "@/lib/cashfree.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Daily Marketing Strategist — ₹100/Month" },
+      { title: "Daily Marketing Strategist — ₹300 for 3 Months" },
       {
         name: "description",
-        content: "Get daily Instagram trends, niche-specific content ideas and profile audits inside one focused WhatsApp group for ₹100 a month.",
+        content: "Get daily Instagram trends, niche-specific content ideas and profile audits inside one focused WhatsApp group for ₹300 for three months.",
       },
-      { property: "og:title", content: "Daily Marketing Strategist — ₹100/Month" },
+      { property: "og:title", content: "Daily Marketing Strategist — ₹300 for 3 Months" },
       {
         property: "og:description",
-        content: "Your marketing strategist on WhatsApp for ₹100 a month.",
+        content: "Your marketing strategist on WhatsApp for ₹300 for three months.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -61,7 +69,7 @@ const registrationSchema = z.object({
   name: z.string().trim().min(2, "Please enter your full name"),
   email: z.string().trim().email("Please enter a valid email"),
   whatsapp: z.string().regex(/^\d{10}$/, "Enter a valid 10-digit WhatsApp number"),
-    terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
+  terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
 });
 
 const testimonials = [
@@ -81,18 +89,18 @@ const curriculum = [
 ];
 
 const faqs = [
-  ["What exactly do I get for ₹100 a month?", "You join the private WhatsApp group and receive daily Instagram trend updates, niche-specific applications, format suggestions, an 11 AM content idea and access to the daily audit series."],
+  ["What exactly do I get for ₹300?", "You get three months in the private WhatsApp group and receive daily Instagram trend updates, niche-specific applications, format suggestions, an 11 AM content idea and access to the daily audit series."],
   ["Will the ideas work for my niche?", "The group is built around adapting trends and formats to different niches instead of sending everyone the same generic advice."],
   ["How does the free profile audit work?", "One Instagram profile from the group is selected for an audit each day. Every member can learn from the feedback shared."],
   ["When will I receive the daily content idea?", "A fresh content idea is shared every morning at 11 AM in the WhatsApp group."],
-  ["Can I cancel later?", "Yes. This is a monthly membership, so you can choose not to renew for the next month."],
+  ["Is this a recurring payment?", "No. ₹300 is charged once and gives you three full months of access. There is no automatic monthly renewal."],
 ];
 
 function scrollToCheckout() {
   document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function CtaButton({ className = "", children = "Buy Now — ₹100/Month" }: { className?: string; children?: ReactNode }) {
+function CtaButton({ className = "", children = "Buy Now — ₹300 for 3 Months" }: { className?: string; children?: ReactNode }) {
   return (
     <Button onClick={scrollToCheckout} className={`cta-gradient h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
       {children}<ArrowRight className="size-5" />
@@ -102,7 +110,7 @@ function CtaButton({ className = "", children = "Buy Now — ₹100/Month" }: { 
 
 function BuyNowBand({ title = "Stop guessing what to post tomorrow." }: { title?: string }) {
   return <div className="mx-auto mt-10 max-w-4xl rounded-lg border border-primary/40 bg-surface-dark p-5 shadow-neon sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-7">
-    <div><p className="text-xs font-black uppercase text-accent">Founding access · ₹100/month</p><p className="mt-1 text-xl font-black text-foreground sm:text-2xl">{title}</p></div>
+    <div><p className="text-xs font-black uppercase text-accent">3 months access · ₹100/month</p><p className="mt-1 text-xl font-black text-foreground sm:text-2xl">{title}</p></div>
     <CtaButton className="mt-5 w-full shrink-0 sm:mt-0 sm:w-auto" />
   </div>;
 }
@@ -143,10 +151,14 @@ function CountUp({ end, suffix = "", label }: { end: number; suffix?: string; la
 }
 
 function Index() {
-  const [submitted, setSubmitted] = useState(false);
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [isPaying, setIsPaying] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const [paymentResult, setPaymentResult] = useState<{ paid: boolean; groupUrl?: string; status?: string } | null>(null);
+  const createOrder = useServerFn(createCashfreeOrder);
+  const verifyOrder = useServerFn(verifyCashfreeOrder);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -155,9 +167,17 @@ function Index() {
       if (key.startsWith("utm_") || key === "fbclid") kept[key] = value;
     });
     setTracking(kept);
-  }, []);
+    const returnedOrderId = params.get("cashfree_order_id");
+    if (returnedOrderId) {
+      setIsPaying(true);
+      verifyOrder({ data: { orderId: returnedOrderId } })
+        .then((result) => setPaymentResult(result))
+        .catch(() => setPaymentError("We could not verify your payment yet. Please try again shortly."))
+        .finally(() => setIsPaying(false));
+    }
+  }, [verifyOrder]);
 
-  function submitRegistration(event: FormEvent<HTMLFormElement>) {
+  async function submitRegistration(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const result = registrationSchema.safeParse({
@@ -169,10 +189,18 @@ function Index() {
       setErrors(next);
       return;
     }
-    // Tracking parameters are ready to send with the lead when a checkout endpoint is connected.
-    void { ...result.data, ...tracking };
     setErrors({});
-    setSubmitted(true);
+    setPaymentError("");
+    setIsPaying(true);
+    try {
+      const order = await createOrder({ data: { name: result.data.name, email: result.data.email, whatsapp: result.data.whatsapp, tracking } });
+      const cashfree = await load({ mode: order.mode });
+      await cashfree.checkout({ paymentSessionId: order.paymentSessionId, redirectTarget: "_self" });
+    } catch (error) {
+      console.error(error);
+      setPaymentError("Payment could not be started. Please check your details and try again.");
+      setIsPaying(false);
+    }
   }
 
   return <main className="overflow-hidden bg-background pb-24 text-foreground md:pb-0">
@@ -183,7 +211,7 @@ function Index() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-9 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 font-black"><span className="cta-gradient grid size-9 place-items-center rounded-md"><Zap className="size-5 fill-current" /></span>THE CONTENT DESK</div>
-          <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-card px-3 py-2 text-xs font-bold shadow-neon"><span className="size-2 animate-pulse rounded-full bg-success" /> ₹100 offer live</div>
+          <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-card px-3 py-2 text-xs font-bold shadow-neon"><span className="size-2 animate-pulse rounded-full bg-success" /> ₹300 · 3 months</div>
         </div>
 
         <div className="grid items-center gap-10 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
@@ -197,7 +225,7 @@ function Index() {
             </div>
             <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
               <CtaButton className="w-full sm:w-auto" />
-              <p className="text-sm font-bold text-muted-foreground">Less than ₹4 a day · <span className="text-xl text-primary">₹100/month</span></p>
+              <p className="text-sm font-bold text-muted-foreground">Less than ₹4 a day · <span className="text-xl text-primary">₹300 one time</span></p>
             </div>
             <div className="mt-6 flex items-center justify-center gap-3 lg:justify-start">
               <div className="flex -space-x-3">
@@ -208,12 +236,10 @@ function Index() {
           </div>
 
           <div className="relative">
-            <div className="absolute -left-3 -top-3 z-10 rotate-[-4deg] rounded-md bg-primary px-4 py-2 text-xs font-black uppercase text-primary-foreground shadow-lg">Watch this first</div>
+            <div className="absolute -left-3 -top-3 z-10 rotate-[-4deg] rounded-md bg-primary px-4 py-2 text-xs font-black uppercase text-primary-foreground shadow-lg">Daily clarity on WhatsApp</div>
             <div className="overflow-hidden rounded-lg border border-accent/50 bg-card shadow-neon">
-              <div className="aspect-video">
-                <iframe className="h-full w-full" src="https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0&modestbranding=1" title="WhatsApp marketing strategist preview" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-              </div>
-              <div className="flex items-center justify-between gap-3 px-4 py-3 text-foreground"><span className="flex items-center gap-2 text-sm font-bold"><Play className="size-4 fill-current" /> See how the group works</span><span className="text-xs text-muted-foreground">Trends. Ideas. Audits.</span></div>
+              <img src={whatsappMarketingHero} width={1536} height={1024} alt="Small business owner receiving daily marketing guidance on her phone" className="aspect-[3/2] w-full object-cover" />
+              <div className="flex items-center justify-between gap-3 px-4 py-3 text-foreground"><span className="flex items-center gap-2 text-sm font-bold"><MessageCircleMore className="size-4" /> Strategy where you already work</span><span className="text-xs text-muted-foreground">Trends. Ideas. Audits.</span></div>
             </div>
           </div>
         </div>
@@ -221,6 +247,19 @@ function Index() {
          <div className="mt-12 grid grid-cols-3 divide-x divide-border rounded-lg border border-accent/25 bg-card px-2 py-5 shadow-neon sm:px-8">
           <CountUp end={100} suffix="+" label="Accounts" /><CountUp end={6} suffix=" years" label="Agency experience" /><CountUp end={1} suffix=" daily" label="Profile audit" />
         </div>
+      </div>
+    </section>
+
+    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
+      <div className="mx-auto max-w-5xl">
+        <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
+        <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
+          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-accent/20 bg-card px-5 sm:px-7">
+            <AccordionTrigger className="py-6 text-left text-foreground hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="cta-gradient grid size-10 shrink-0 place-items-center rounded-md font-black">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
+            <AccordionContent className="pb-6 pl-14 text-muted-foreground"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
+          </AccordionItem>)}
+        </Accordion>
+        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure one-time checkout · 3 months WhatsApp access</p></div>
       </div>
     </section>
 
@@ -237,24 +276,11 @@ function Index() {
       </div>
     </section>
 
-    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
-      <div className="mx-auto max-w-5xl">
-        <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
-        <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
-          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-accent/20 bg-card px-5 sm:px-7">
-            <AccordionTrigger className="py-6 text-left text-foreground hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="cta-gradient grid size-10 shrink-0 place-items-center rounded-md font-black">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
-            <AccordionContent className="pb-6 pl-14 text-muted-foreground"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
-          </AccordionItem>)}
-        </Accordion>
-        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure monthly checkout · WhatsApp access details</p></div>
-      </div>
-    </section>
-
     <section className="px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl"><SectionHeading eyebrow="Built for every niche" title="Different niches need different formats." />
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {["Coaches", "Doctors", "Ed-tech Brands", "F&B & Luxury"].map((label, i) => <article key={label} className="group relative aspect-[4/5] overflow-hidden rounded-lg bg-muted">
-            <img src={audiencePhoto} loading="lazy" width={1536} height={1024} alt={`${label} building their creator skills`} className="h-full w-full scale-[1.8] object-cover transition-transform duration-500 group-hover:scale-[1.9]" style={{ objectPosition: `${10 + i * 28}% center` }} />
+          {[["Coaches", audienceCoach], ["Doctors", audienceDoctor], ["Ed-tech Brands", audienceEducation], ["F&B & Luxury", audienceLifestyle]].map(([label, image]) => <article key={label} className="group relative aspect-[4/5] overflow-hidden rounded-lg bg-muted">
+            <img src={image} loading="lazy" width={1024} height={1280} alt={`${label} creating social media content`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-x-0 bottom-0 bg-image-label p-4 text-foreground"><p className="text-lg font-black sm:text-2xl">{label}</p><p className="mt-1 hidden text-xs text-foreground/75 sm:block">Get strategy built for your category.</p></div>
           </article>)}
         </div>
@@ -277,15 +303,15 @@ function Index() {
     </div></section>
 
     <section className="border-y border-primary/20 bg-price px-4 py-16 sm:py-24">
-      <div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple monthly access" title="Your daily marketing support for ₹100." />
+      <div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple 3-month access" title="₹100 a month, paid once as ₹300." />
         <div className="grid gap-4 md:grid-cols-3">
           {[["Daily Trend Research", "₹999", "Instagram trends and viral topics filtered for relevance."], ["Daily Content Direction", "₹1,499", "An 11 AM idea plus formats suited to your niche."], ["Profile Audit Access", "₹1,999", "Daily practical feedback the whole group can learn from."]] .map(([name, value, copy], i) => <article key={name} className="rounded-lg border border-foreground/15 bg-background p-6 shadow-card"><span className="grid size-10 place-items-center rounded-md bg-accent font-black">0{i+1}</span><h3 className="mt-5 text-xl font-black">{name}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p><p className="mt-5 text-sm font-bold">Value <span className="line-through">{value}</span> <span className="ml-2 text-success">INCLUDED</span></p></article>)}
         </div>
         <div className="mt-7 rounded-lg border-2 border-foreground bg-background p-6 shadow-editorial sm:p-9">
           <div className="grid items-center gap-7 sm:grid-cols-[1fr_auto]">
-            <div><div className="inline-flex rounded-full bg-success px-3 py-1 text-xs font-black text-success-foreground">MEMBER PRICE ₹100/MONTH</div><p className="mt-4 text-sm font-bold uppercase text-muted-foreground">Comparable monthly value <span className="line-through">₹4,497</span></p><p className="mt-1 text-3xl font-black">Get the full WhatsApp membership for</p></div>
-            <div className="text-center sm:text-right"><p className="text-7xl font-black text-primary">₹100</p><p className="text-xs font-bold uppercase text-muted-foreground">per month</p></div>
-          </div><CtaButton className="mt-7 w-full" children="Buy Now — ₹100/Month" />
+            <div><div className="inline-flex rounded-full bg-success px-3 py-1 text-xs font-black text-success-foreground">3 MONTHS · ONE-TIME PAYMENT</div><p className="mt-4 text-sm font-bold uppercase text-muted-foreground">Comparable value <span className="line-through">₹13,491</span></p><p className="mt-1 text-3xl font-black">Get three months of WhatsApp membership for</p></div>
+            <div className="text-center sm:text-right"><p className="text-7xl font-black text-primary">₹300</p><p className="text-xs font-bold uppercase text-muted-foreground">₹100 per month</p></div>
+          </div><CtaButton className="mt-7 w-full" />
         </div>
       </div>
     </section>
@@ -299,35 +325,51 @@ function Index() {
           <blockquote className="mt-6 border-l-4 border-primary pl-5 text-xl font-black leading-8">“The right trend only works when it is translated for your niche.”</blockquote>
           <div className="mt-7 grid grid-cols-3 divide-x divide-border rounded-lg bg-card p-4"><CountUp end={6} suffix=" years" label="Agency experience" /><CountUp end={100} suffix="+" label="Accounts worked on" /><CountUp end={5} suffix="+" label="Niches served" /></div>
           <div className="mt-7 grid gap-3 sm:grid-cols-2"><div className="rounded-md border border-border p-4"><p className="mb-3 text-xs font-black uppercase text-muted-foreground">Before</p>{["Generic trend lists", "Wrong formats", "Daily guesswork"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><X className="size-4 text-primary" />{x}</p>)}</div><div className="rounded-md border border-accent/30 bg-accent/5 p-4"><p className="mb-3 text-xs font-black uppercase text-accent">After</p>{["Niche-specific trends", "Format direction", "Daily content idea"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><Check className="size-4 text-accent" />{x}</p>)}</div></div>
-          <CtaButton className="mt-7 w-full sm:w-auto" children="Buy Access Now — ₹100" />
+          <CtaButton className="mt-7 w-full sm:w-auto" />
         </div>
       </div>
     </section>
 
     <section aria-label="Featured publications" className="border-y border-border bg-muted py-7"><p className="mb-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Experience across niches</p><div className="marquee-mask overflow-hidden"><div className="flex w-max animate-marquee gap-14 px-7 text-xl font-black text-muted-foreground/70">{["COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B", "COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B"].map((x,i) => <span key={`${x}-${i}`} className="whitespace-nowrap">{x}</span>)}</div></div></section>
 
-    <section className="relative overflow-hidden border-y border-primary/30 bg-surface-dark px-4 py-16 sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10 text-primary" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-accent">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>FOUNDING OFFER</span><span>₹100 / MONTH</span></div><div className="h-4 overflow-hidden rounded-full bg-muted"><div className="cta-gradient h-full w-[86%] rounded-full" /></div><p className="mt-2 text-right text-xs font-bold text-primary">Limited founding memberships available</p><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Price may increase soon</span><span className="urgency"><Users /> Private WhatsApp group</span><span className="urgency"><Gift /> Cancel before renewal</span></div><CtaButton className="mt-8" children="Buy Now — Join for ₹100" /></div></div></section>
+    <section className="relative overflow-hidden border-y border-primary/30 bg-surface-dark px-4 py-16 sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10 text-primary" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-accent">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>3-MONTH OFFER</span><span>₹300 ONE TIME</span></div><div className="h-4 overflow-hidden rounded-full bg-muted"><div className="cta-gradient h-full w-[86%] rounded-full" /></div><p className="mt-2 text-right text-xs font-bold text-primary">Limited founding memberships available</p><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Price may increase soon</span><span className="urgency"><Users /> Private WhatsApp group</span><span className="urgency"><Gift /> No automatic renewal</span></div><CtaButton className="mt-8" /></div></div></section>
 
-    <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple from here" title="What happens next?" /><div className="grid gap-3 md:grid-cols-5">{[["Register", "Share your details"], ["Pay ₹100", "Start your membership"], ["Confirm", "Check WhatsApp"], ["Join", "Enter the private group"], ["Create", "Use your first daily idea"]].map(([title, copy], i) => <article key={title} className="relative rounded-lg border border-border p-5"><span className="text-4xl font-black text-primary/25">0{i+1}</span><h3 className="mt-4 font-black">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{copy}</p>{i < 4 && <ArrowRight className="absolute -right-3 top-8 z-10 hidden size-5 text-primary md:block" />}</article>)}</div></div></section>
+    <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple from here" title="What happens next?" /><div className="grid gap-3 md:grid-cols-5">{[["Register", "Share your details"], ["Pay ₹300", "Get three months access"], ["Confirm", "See payment complete"], ["Join", "Open the private group link"], ["Create", "Use your first daily idea"]].map(([title, copy], i) => <article key={title} className="relative rounded-lg border border-border p-5"><span className="text-4xl font-black text-primary/25">0{i+1}</span><h3 className="mt-4 font-black">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{copy}</p>{i < 4 && <ArrowRight className="absolute -right-3 top-8 z-10 hidden size-5 text-primary md:block" />}</article>)}</div></div></section>
 
     <section className="bg-card px-4 py-16 sm:py-24"><div className="mx-auto max-w-3xl"><SectionHeading eyebrow="No doubts left behind" title="Frequently asked questions" /><Accordion type="single" collapsible className="rounded-lg border border-border bg-background px-5 sm:px-7">{faqs.map(([q,a],i) => <AccordionItem value={`faq-${i}`} key={q}><AccordionTrigger className="py-5 text-base font-black hover:no-underline">{q}</AccordionTrigger><AccordionContent className="text-sm leading-7 text-muted-foreground">{a}</AccordionContent></AccordionItem>)}</Accordion><BuyNowBand title="Ready for your next clear content idea?" /></div></section>
 
     <section id="checkout" className="scroll-mt-4 px-4 py-16 sm:py-24"><div className="mx-auto grid max-w-5xl overflow-hidden rounded-lg border-2 border-foreground bg-background shadow-editorial lg:grid-cols-[.85fr_1.15fr]">
-      <div className="bg-surface-dark p-7 text-foreground sm:p-10"><p className="text-xs font-black uppercase tracking-[0.18em] text-accent">Final step</p><h2 className="mt-3 text-4xl font-black leading-tight">Your strategist is one tap away.</h2><p className="mt-4 leading-7 text-muted-foreground">Join the WhatsApp group that turns daily Instagram change into clear content direction.</p><div className="my-7 border-y border-border py-6"><div className="flex items-end justify-between"><div><p className="text-sm text-muted-foreground line-through">₹4,497 value</p><p className="gradient-text text-5xl font-black">₹100</p><p className="text-xs font-bold uppercase text-muted-foreground">per month</p></div><span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">FOUNDING PRICE</span></div></div><ul className="space-y-3 text-sm font-bold">{["Daily trend updates", "11 AM content idea", "Niche-specific formats", "Daily profile audit"].map(x => <li key={x} className="flex gap-2"><CheckCircle2 className="size-5 text-accent" />{x}</li>)}</ul><div className="mt-7 grid grid-cols-2 gap-3 border-t border-border pt-6 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-2"><Target className="size-4 text-primary" /> Niche-specific</span><span className="flex items-center gap-2"><TrendingUp className="size-4 text-accent" /> Daily updates</span></div></div>
-      <div className="p-7 sm:p-10">{submitted ? <div className="flex min-h-[430px] flex-col items-center justify-center text-center"><div className="grid size-16 place-items-center rounded-full bg-success text-success-foreground"><Check className="size-8" /></div><h3 className="mt-5 text-3xl font-black">You're on the list!</h3><p className="mt-3 max-w-sm leading-7 text-muted-foreground">Your details passed validation. Connect checkout to collect payment and send access.</p></div> : <form onSubmit={submitRegistration} noValidate>
+      <div className="bg-surface-dark p-7 text-foreground sm:p-10"><p className="text-xs font-black uppercase tracking-[0.18em] text-accent">Final step</p><h2 className="mt-3 text-4xl font-black leading-tight">Your strategist is one tap away.</h2><p className="mt-4 leading-7 text-muted-foreground">Join the WhatsApp group that turns daily Instagram change into clear content direction.</p><div className="my-7 border-y border-border py-6"><div className="flex items-end justify-between"><div><p className="text-sm text-muted-foreground line-through">₹13,491 value</p><p className="gradient-text text-5xl font-black">₹300</p><p className="text-xs font-bold uppercase text-muted-foreground">one time · 3 months</p></div><span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">₹100 / MONTH</span></div></div><ul className="space-y-3 text-sm font-bold">{["Daily trend updates", "11 AM content idea", "Niche-specific formats", "Daily profile audit"].map(x => <li key={x} className="flex gap-2"><CheckCircle2 className="size-5 text-accent" />{x}</li>)}</ul><div className="mt-7 grid grid-cols-2 gap-3 border-t border-border pt-6 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-2"><Target className="size-4 text-primary" /> Niche-specific</span><span className="flex items-center gap-2"><TrendingUp className="size-4 text-accent" /> Daily updates</span></div></div>
+      <div className="p-7 sm:p-10"><form onSubmit={submitRegistration} noValidate>
         <h3 className="text-2xl font-black">Reserve your spot</h3><p className="mt-1 text-sm text-muted-foreground">Takes less than 60 seconds.</p>
         <div className="mt-7 space-y-5"><div><Label htmlFor="name">Full name</Label><Input id="name" name="name" autoComplete="name" placeholder="Your full name" className="mt-2 h-12" aria-invalid={!!errors["name"]} />{errors["name"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["name"]}</p>}</div>
           <div><Label htmlFor="email">Email address</Label><Input id="email" name="email" type="email" autoComplete="email" placeholder="you@example.com" className="mt-2 h-12" aria-invalid={!!errors["email"]} />{errors["email"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["email"]}</p>}</div>
           <div><Label htmlFor="whatsapp">WhatsApp number</Label><div className="mt-2 grid grid-cols-[auto_1fr]"><span className="grid h-12 place-items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm font-bold">+91</span><Input id="whatsapp" name="whatsapp" type="tel" inputMode="numeric" maxLength={10} autoComplete="tel" placeholder="10-digit number" className="h-12 rounded-l-none" aria-invalid={!!errors["whatsapp"]} /></div>{errors["whatsapp"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["whatsapp"]}</p>}</div>
           <div><div className="flex items-start gap-3"><Checkbox id="terms" checked={terms} onCheckedChange={(v) => setTerms(v === true)} className="mt-0.5" /><Label htmlFor="terms" className="text-sm font-normal leading-5 text-muted-foreground">I agree to the terms and consent to receive access updates on WhatsApp and email.</Label></div>{errors["terms"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["terms"]}</p>}</div>
           {Object.entries(tracking).map(([key,value]) => <input key={key} type="hidden" name={key} value={value} />)}
-          <Button type="submit" className="cta-gradient h-14 w-full text-base font-black shadow-cta">Buy Now — ₹100/Month <ArrowRight className="size-5" /></Button>
+          {paymentError && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm font-bold text-destructive">{paymentError}</p>}
+          <Button type="submit" disabled={isPaying} className="cta-gradient h-14 w-full text-base font-black shadow-cta">{isPaying ? "Opening secure payment…" : "Pay ₹300 Securely"} <ArrowRight className="size-5" /></Button>
         </div><div className="mt-5 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-muted-foreground"><span><ShieldCheck className="mx-auto mb-1 size-4" />Secure payment</span><span><MessageCircleMore className="mx-auto mb-1 size-4" />WhatsApp confirm</span><span><Users className="mx-auto mb-1 size-4" />Limited spots</span></div>
-      </form>}</div>
+      </form></div>
     </div><p className="mx-auto mt-7 max-w-xl text-center text-xs leading-5 text-muted-foreground">The Content Desk shares strategic guidance and trend research. Results vary by niche, execution and consistency.</p></section>
 
     <footer className="border-t border-border px-4 py-8 text-center text-xs text-muted-foreground">© 2026 The Content Desk · Daily marketing clarity on WhatsApp.</footer>
 
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/35 bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="gradient-text text-xl font-black">₹100/month</span></p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> Founding price live</p></div><Button onClick={scrollToCheckout} className="cta-gradient h-12 shrink-0 px-5 font-black">Buy Now <ArrowRight /></Button></div></div>
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/35 bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="gradient-text text-xl font-black">₹300</span> · 3 months</p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> ₹100/month equivalent</p></div><Button onClick={scrollToCheckout} className="cta-gradient h-12 shrink-0 px-5 font-black">Buy Now <ArrowRight /></Button></div></div>
+
+    <Dialog open={paymentResult !== null} onOpenChange={(open) => { if (!open) setPaymentResult(null); }}>
+      <DialogContent className="max-w-md border-accent/40 text-center shadow-neon">
+        {paymentResult?.paid ? <>
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-success text-success-foreground"><Check className="size-8" /></div>
+          <DialogTitle className="text-3xl font-black">Payment complete!</DialogTitle>
+          <DialogDescription className="text-base leading-7">Your three-month access is active. Join the private WhatsApp group now.</DialogDescription>
+          <Button asChild className="cta-gradient h-14 w-full text-base font-black"><a href={paymentResult.groupUrl} target="_blank" rel="noreferrer">Join WhatsApp Group <ArrowRight /></a></Button>
+        </> : <>
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-muted"><Clock3 className="size-8 text-primary" /></div>
+          <DialogTitle className="text-2xl font-black">Payment is still processing</DialogTitle>
+          <DialogDescription className="leading-7">We have not received a successful confirmation yet. If you paid, wait a moment and refresh this page.</DialogDescription>
+        </>}
+      </DialogContent>
+    </Dialog>
   </main>;
 }
