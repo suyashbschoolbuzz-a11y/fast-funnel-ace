@@ -8,12 +8,15 @@ import {
   CheckCircle2,
   Clock3,
   Flame,
+  Gift,
   LockKeyhole,
   MessageCircleMore,
   Play,
   ShieldCheck,
   Sparkles,
   Star,
+  Target,
+  TrendingUp,
   Users,
   Video,
   X,
@@ -89,12 +92,19 @@ function scrollToCheckout() {
   document.getElementById("checkout")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function CtaButton({ className = "", children = "Join for ₹100 a Month" }: { className?: string; children?: ReactNode }) {
+function CtaButton({ className = "", children = "Buy Now — ₹100/Month" }: { className?: string; children?: ReactNode }) {
   return (
-    <Button onClick={scrollToCheckout} className={`h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
+    <Button onClick={scrollToCheckout} className={`cta-gradient h-14 rounded-md px-7 text-base font-black shadow-cta transition-transform hover:-translate-y-0.5 ${className}`}>
       {children}<ArrowRight className="size-5" />
     </Button>
   );
+}
+
+function BuyNowBand({ title = "Stop guessing what to post tomorrow." }: { title?: string }) {
+  return <div className="mx-auto mt-10 max-w-4xl rounded-lg border border-primary/40 bg-surface-dark p-5 shadow-neon sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-7">
+    <div><p className="text-xs font-black uppercase text-accent">Founding access · ₹100/month</p><p className="mt-1 text-xl font-black text-foreground sm:text-2xl">{title}</p></div>
+    <CtaButton className="mt-5 w-full shrink-0 sm:mt-0 sm:w-auto" />
+  </div>;
 }
 
 function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: string; copy?: string }) {
@@ -172,14 +182,14 @@ function Index() {
     <section className="relative border-b border-border bg-hero px-4 pb-14 pt-5 sm:pb-20 sm:pt-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-9 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 font-black"><span className="grid size-9 place-items-center rounded-md bg-foreground text-background"><Zap className="size-5 fill-current" /></span>THE CONTENT DESK</div>
-          <div className="flex items-center gap-2 rounded-full border border-primary/25 bg-background px-3 py-2 text-xs font-bold shadow-sm"><span className="size-2 animate-pulse rounded-full bg-success" /> Founding price now open</div>
+          <div className="flex items-center gap-2 font-black"><span className="cta-gradient grid size-9 place-items-center rounded-md"><Zap className="size-5 fill-current" /></span>THE CONTENT DESK</div>
+          <div className="flex items-center gap-2 rounded-full border border-primary/40 bg-card px-3 py-2 text-xs font-bold shadow-neon"><span className="size-2 animate-pulse rounded-full bg-success" /> ₹100 offer live</div>
         </div>
 
         <div className="grid items-center gap-10 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
           <div className="text-center lg:text-left">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-xs font-black uppercase text-accent-foreground"><Sparkles className="size-4" /> Daily strategy, directly on WhatsApp</div>
-            <h1 className="text-balance text-[2.65rem] font-black leading-[1.02] sm:text-6xl lg:text-7xl">Your marketing strategist for just <span className="text-primary">₹100 a month.</span></h1>
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-xs font-black uppercase text-accent"><Sparkles className="size-4" /> Daily strategy, directly on WhatsApp</div>
+            <h1 className="text-balance text-[2.65rem] font-black leading-[1.02] sm:text-6xl lg:text-7xl">Your marketing strategist for just <span className="gradient-text">₹100 a month.</span></h1>
             <p className="mx-auto mt-5 max-w-xl text-pretty text-lg font-medium leading-8 text-muted-foreground lg:mx-0">Join our WhatsApp group for daily trends, viral topics, niche-specific formats and one free Instagram profile audit every day.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
               <span className="chip"><CalendarDays /> New idea every day at 11 AM</span>
@@ -199,16 +209,16 @@ function Index() {
 
           <div className="relative">
             <div className="absolute -left-3 -top-3 z-10 rotate-[-4deg] rounded-md bg-primary px-4 py-2 text-xs font-black uppercase text-primary-foreground shadow-lg">Watch this first</div>
-            <div className="overflow-hidden rounded-lg border-4 border-foreground bg-foreground shadow-editorial">
+            <div className="overflow-hidden rounded-lg border border-accent/50 bg-card shadow-neon">
               <div className="aspect-video">
                 <iframe className="h-full w-full" src="https://www.youtube-nocookie.com/embed/M7lc1UVf-VE?rel=0&modestbranding=1" title="WhatsApp marketing strategist preview" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
               </div>
-              <div className="flex items-center justify-between gap-3 px-4 py-3 text-background"><span className="flex items-center gap-2 text-sm font-bold"><Play className="size-4 fill-current" /> See how the group works</span><span className="text-xs text-background/70">Trends. Ideas. Audits.</span></div>
+              <div className="flex items-center justify-between gap-3 px-4 py-3 text-foreground"><span className="flex items-center gap-2 text-sm font-bold"><Play className="size-4 fill-current" /> See how the group works</span><span className="text-xs text-muted-foreground">Trends. Ideas. Audits.</span></div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 grid grid-cols-3 divide-x divide-border rounded-lg border border-border bg-background px-2 py-5 shadow-sm sm:px-8">
+         <div className="mt-12 grid grid-cols-3 divide-x divide-border rounded-lg border border-accent/25 bg-card px-2 py-5 shadow-neon sm:px-8">
           <CountUp end={100} suffix="+" label="Accounts" /><CountUp end={6} suffix=" years" label="Agency experience" /><CountUp end={1} suffix=" daily" label="Profile audit" />
         </div>
       </div>
@@ -223,19 +233,20 @@ function Index() {
             <p className="text-base font-semibold leading-7">“{item.text}”</p><div className="mt-5 inline-flex rounded-sm bg-foreground px-2.5 py-1.5 text-xs font-black text-background">{item.result}</div>
           </article>)}
         </div>
+        <BuyNowBand title="Get tomorrow’s content direction before 11 AM." />
       </div>
     </section>
 
-    <section className="bg-foreground px-4 py-16 text-background sm:py-24">
+    <section className="border-y border-accent/20 bg-surface-dark px-4 py-16 text-foreground sm:py-24">
       <div className="mx-auto max-w-5xl">
         <SectionHeading eyebrow="What you get" title="A marketing desk in your WhatsApp" copy="Daily, niche-specific direction that tells you what to create and how to use what is trending." />
         <Accordion type="single" collapsible defaultValue="module-0" className="space-y-3">
-          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-background/20 bg-surface-dark px-5 sm:px-7">
-            <AccordionTrigger className="py-6 text-left text-background hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="grid size-10 shrink-0 place-items-center rounded-md bg-primary font-black text-primary-foreground">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
-            <AccordionContent className="pb-6 pl-14 text-background/75"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
+          {curriculum.map((item, i) => <AccordionItem key={item.title} value={`module-${i}`} className="overflow-hidden rounded-lg border border-accent/20 bg-card px-5 sm:px-7">
+            <AccordionTrigger className="py-6 text-left text-foreground hover:no-underline"><span className="flex min-w-0 items-center gap-4"><span className="cta-gradient grid size-10 shrink-0 place-items-center rounded-md font-black">0{i + 1}</span><span><span className="mb-1 block text-[10px] font-black uppercase tracking-[0.18em] text-accent">{item.kicker}</span><span className="text-lg font-black sm:text-xl">{item.title}</span></span></span></AccordionTrigger>
+            <AccordionContent className="pb-6 pl-14 text-muted-foreground"><ul className="space-y-3">{item.bullets.map(b => <li key={b} className="flex gap-3"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent" />{b}</li>)}</ul></AccordionContent>
           </AccordionItem>)}
         </Accordion>
-        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-background/60"><LockKeyhole className="size-3.5" /> Secure monthly checkout · WhatsApp access details</p></div>
+        <div className="mt-8 text-center"><CtaButton /><p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5" /> Secure monthly checkout · WhatsApp access details</p></div>
       </div>
     </section>
 
@@ -247,8 +258,23 @@ function Index() {
             <div className="absolute inset-x-0 bottom-0 bg-image-label p-4 text-background"><p className="text-lg font-black sm:text-2xl">{label}</p><p className="mt-1 hidden text-xs text-background/75 sm:block">Get strategy built for your category.</p></div>
           </article>)}
         </div>
+        <BuyNowBand title="Your niche deserves more than generic content tips." />
       </div>
     </section>
+
+    <section className="border-y border-border bg-card px-4 py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl"><SectionHeading eyebrow="Why this is different" title="Not another noisy tips group." copy="Daily direction designed to help you move from endless scrolling to clear, niche-specific action." />
+        <div className="grid gap-4 md:grid-cols-2">
+          <article className="rounded-lg border border-border bg-background p-6"><p className="text-xs font-black uppercase text-muted-foreground">Generic content groups</p><div className="mt-5 space-y-4">{["Random links without context", "One idea copied across every niche", "Advice that disappears in the noise", "No expert feedback loop"].map(item => <p key={item} className="flex gap-3 font-bold text-muted-foreground"><X className="size-5 shrink-0 text-primary" />{item}</p>)}</div></article>
+          <article className="rounded-lg border border-accent/35 bg-surface-dark p-6 shadow-neon"><p className="text-xs font-black uppercase text-accent">The Content Desk</p><div className="mt-5 space-y-4">{["Trends filtered for your category", "Formats matched to your niche", "A usable idea every morning at 11 AM", "A real profile audit every day"].map(item => <p key={item} className="flex gap-3 font-bold"><CheckCircle2 className="size-5 shrink-0 text-accent" />{item}</p>)}</div></article>
+        </div>
+      </div>
+    </section>
+
+    <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Your daily rhythm" title="Fresh direction, delivered consistently." copy="Open WhatsApp, see what matters today, and turn it into content for your niche." />
+      <div className="grid gap-4 sm:grid-cols-3">{[["Morning", "11 AM idea drop", "Start with one clear content direction."], ["During the day", "Trend + format updates", "See how current conversations fit your niche."], ["Daily spotlight", "Profile audit", "Learn from practical feedback on one member account."]].map(([time,title,copy],i) => <article key={title} className="rounded-lg border border-border bg-card p-6 shadow-card"><span className="cta-gradient grid size-10 place-items-center rounded-md font-black">0{i+1}</span><p className="mt-5 text-xs font-black uppercase text-accent">{time}</p><h3 className="mt-1 text-xl font-black">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{copy}</p></article>)}</div>
+      <BuyNowBand title="One focused message can unlock your next post." />
+    </div></section>
 
     <section className="border-y border-primary/20 bg-price px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple monthly access" title="Your daily marketing support for ₹100." />
@@ -271,22 +297,23 @@ function Index() {
           <div className="mt-5 flex flex-wrap gap-2"><span className="tag"><BadgeCheck /> Agency owner</span><span className="tag"><Video /> 100+ accounts</span><span className="tag"><Users /> 6 years of experience</span></div>
           <p className="mt-6 text-base leading-8 text-muted-foreground">I’m an agency owner who has worked on 100+ accounts over the past six years and helped every account achieve viral reach. I’ve worked with coaches, doctors, ed-tech companies, luxury brands and F&B businesses—and learned that every niche needs a different content format and growth style.</p>
           <blockquote className="mt-6 border-l-4 border-primary pl-5 text-xl font-black leading-8">“The right trend only works when it is translated for your niche.”</blockquote>
-          <div className="mt-7 grid grid-cols-3 divide-x divide-border rounded-lg bg-muted p-4"><CountUp end={6} suffix=" years" label="Agency experience" /><CountUp end={100} suffix="+" label="Accounts worked on" /><CountUp end={5} suffix="+" label="Niches served" /></div>
-          <div className="mt-7 grid gap-3 sm:grid-cols-2"><div className="rounded-md border border-border p-4"><p className="mb-3 text-xs font-black uppercase text-muted-foreground">Before</p>{["Generic trend lists", "Wrong formats", "Daily guesswork"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><X className="size-4 text-primary" />{x}</p>)}</div><div className="rounded-md border border-success/30 bg-success/5 p-4"><p className="mb-3 text-xs font-black uppercase text-success">After</p>{["Niche-specific trends", "Format direction", "Daily content idea"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><Check className="size-4 text-success" />{x}</p>)}</div></div>
+          <div className="mt-7 grid grid-cols-3 divide-x divide-border rounded-lg bg-card p-4"><CountUp end={6} suffix=" years" label="Agency experience" /><CountUp end={100} suffix="+" label="Accounts worked on" /><CountUp end={5} suffix="+" label="Niches served" /></div>
+          <div className="mt-7 grid gap-3 sm:grid-cols-2"><div className="rounded-md border border-border p-4"><p className="mb-3 text-xs font-black uppercase text-muted-foreground">Before</p>{["Generic trend lists", "Wrong formats", "Daily guesswork"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><X className="size-4 text-primary" />{x}</p>)}</div><div className="rounded-md border border-accent/30 bg-accent/5 p-4"><p className="mb-3 text-xs font-black uppercase text-accent">After</p>{["Niche-specific trends", "Format direction", "Daily content idea"].map(x => <p key={x} className="mb-2 flex items-center gap-2 text-sm"><Check className="size-4 text-accent" />{x}</p>)}</div></div>
+          <CtaButton className="mt-7 w-full sm:w-auto" children="Buy Access Now — ₹100" />
         </div>
       </div>
     </section>
 
     <section aria-label="Featured publications" className="border-y border-border bg-muted py-7"><p className="mb-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Experience across niches</p><div className="marquee-mask overflow-hidden"><div className="flex w-max animate-marquee gap-14 px-7 text-xl font-black text-muted-foreground/70">{["COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B", "COACHES", "DOCTORS", "ED-TECH", "LUXURY", "F&B"].map((x,i) => <span key={`${x}-${i}`} className="whitespace-nowrap">{x}</span>)}</div></div></section>
 
-    <section className="bg-primary px-4 py-16 text-primary-foreground sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em]">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>DAILY SUPPORT</span><span>₹100 / MONTH</span></div><div className="h-4 overflow-hidden rounded-full bg-primary-foreground/25"><div className="h-full w-full rounded-full bg-primary-foreground" /></div></div><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Founding price may change</span><span className="urgency"><Users /> Private WhatsApp group</span></div><CtaButton className="mt-8 bg-foreground text-background hover:bg-foreground/90" children="Join the Group for ₹100" /></div></section>
+    <section className="relative overflow-hidden border-y border-primary/30 bg-surface-dark px-4 py-16 sm:py-20"><div className="mx-auto max-w-4xl text-center"><Flame className="mx-auto size-10 text-primary" /><p className="mt-3 text-xs font-black uppercase tracking-[0.18em] text-accent">Founding membership</p><h2 className="mt-3 text-4xl font-black sm:text-5xl">Get daily strategy for less than ₹4 a day.</h2><div className="mx-auto mt-7 max-w-2xl"><div className="mb-2 flex justify-between text-xs font-black"><span>FOUNDING OFFER</span><span>₹100 / MONTH</span></div><div className="h-4 overflow-hidden rounded-full bg-muted"><div className="cta-gradient h-full w-[86%] rounded-full" /></div><p className="mt-2 text-right text-xs font-bold text-primary">Limited founding memberships available</p><div className="mt-6 flex flex-wrap justify-center gap-3 text-sm font-bold"><span className="urgency"><Clock3 /> Price may increase soon</span><span className="urgency"><Users /> Private WhatsApp group</span><span className="urgency"><Gift /> Cancel before renewal</span></div><CtaButton className="mt-8" children="Buy Now — Join for ₹100" /></div></div></section>
 
     <section className="px-4 py-16 sm:py-24"><div className="mx-auto max-w-5xl"><SectionHeading eyebrow="Simple from here" title="What happens next?" /><div className="grid gap-3 md:grid-cols-5">{[["Register", "Share your details"], ["Pay ₹100", "Start your membership"], ["Confirm", "Check WhatsApp"], ["Join", "Enter the private group"], ["Create", "Use your first daily idea"]].map(([title, copy], i) => <article key={title} className="relative rounded-lg border border-border p-5"><span className="text-4xl font-black text-primary/25">0{i+1}</span><h3 className="mt-4 font-black">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{copy}</p>{i < 4 && <ArrowRight className="absolute -right-3 top-8 z-10 hidden size-5 text-primary md:block" />}</article>)}</div></div></section>
 
-    <section className="bg-muted px-4 py-16 sm:py-24"><div className="mx-auto max-w-3xl"><SectionHeading eyebrow="No doubts left behind" title="Frequently asked questions" /><Accordion type="single" collapsible className="rounded-lg border border-border bg-background px-5 sm:px-7">{faqs.map(([q,a],i) => <AccordionItem value={`faq-${i}`} key={q}><AccordionTrigger className="py-5 text-base font-black hover:no-underline">{q}</AccordionTrigger><AccordionContent className="text-sm leading-7 text-muted-foreground">{a}</AccordionContent></AccordionItem>)}</Accordion></div></section>
+    <section className="bg-card px-4 py-16 sm:py-24"><div className="mx-auto max-w-3xl"><SectionHeading eyebrow="No doubts left behind" title="Frequently asked questions" /><Accordion type="single" collapsible className="rounded-lg border border-border bg-background px-5 sm:px-7">{faqs.map(([q,a],i) => <AccordionItem value={`faq-${i}`} key={q}><AccordionTrigger className="py-5 text-base font-black hover:no-underline">{q}</AccordionTrigger><AccordionContent className="text-sm leading-7 text-muted-foreground">{a}</AccordionContent></Accordion><BuyNowBand title="Ready for your next clear content idea?" /></div></section>
 
     <section id="checkout" className="scroll-mt-4 px-4 py-16 sm:py-24"><div className="mx-auto grid max-w-5xl overflow-hidden rounded-lg border-2 border-foreground bg-background shadow-editorial lg:grid-cols-[.85fr_1.15fr]">
-      <div className="bg-foreground p-7 text-background sm:p-10"><p className="text-xs font-black uppercase tracking-[0.18em] text-accent">Final step</p><h2 className="mt-3 text-4xl font-black leading-tight">Your strategist is one tap away.</h2><p className="mt-4 leading-7 text-background/70">Join the WhatsApp group that turns daily Instagram change into clear content direction.</p><div className="my-7 border-y border-background/15 py-6"><div className="flex items-end justify-between"><div><p className="text-sm text-background/60 line-through">₹4,497 value</p><p className="text-5xl font-black">₹100</p><p className="text-xs font-bold uppercase text-background/60">per month</p></div><span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">FOUNDING PRICE</span></div></div><ul className="space-y-3 text-sm font-bold">{["Daily trend updates", "11 AM content idea", "Niche-specific formats", "Daily profile audit"].map(x => <li key={x} className="flex gap-2"><CheckCircle2 className="size-5 text-accent" />{x}</li>)}</ul></div>
+      <div className="bg-surface-dark p-7 text-foreground sm:p-10"><p className="text-xs font-black uppercase tracking-[0.18em] text-accent">Final step</p><h2 className="mt-3 text-4xl font-black leading-tight">Your strategist is one tap away.</h2><p className="mt-4 leading-7 text-muted-foreground">Join the WhatsApp group that turns daily Instagram change into clear content direction.</p><div className="my-7 border-y border-border py-6"><div className="flex items-end justify-between"><div><p className="text-sm text-muted-foreground line-through">₹4,497 value</p><p className="gradient-text text-5xl font-black">₹100</p><p className="text-xs font-bold uppercase text-muted-foreground">per month</p></div><span className="rounded-full bg-accent px-3 py-1 text-xs font-black text-accent-foreground">FOUNDING PRICE</span></div></div><ul className="space-y-3 text-sm font-bold">{["Daily trend updates", "11 AM content idea", "Niche-specific formats", "Daily profile audit"].map(x => <li key={x} className="flex gap-2"><CheckCircle2 className="size-5 text-accent" />{x}</li>)}</ul><div className="mt-7 grid grid-cols-2 gap-3 border-t border-border pt-6 text-xs font-bold text-muted-foreground"><span className="flex items-center gap-2"><Target className="size-4 text-primary" /> Niche-specific</span><span className="flex items-center gap-2"><TrendingUp className="size-4 text-accent" /> Daily updates</span></div></div>
       <div className="p-7 sm:p-10">{submitted ? <div className="flex min-h-[430px] flex-col items-center justify-center text-center"><div className="grid size-16 place-items-center rounded-full bg-success text-success-foreground"><Check className="size-8" /></div><h3 className="mt-5 text-3xl font-black">You're on the list!</h3><p className="mt-3 max-w-sm leading-7 text-muted-foreground">Your details passed validation. Connect checkout to collect payment and send access.</p></div> : <form onSubmit={submitRegistration} noValidate>
         <h3 className="text-2xl font-black">Reserve your spot</h3><p className="mt-1 text-sm text-muted-foreground">Takes less than 60 seconds.</p>
         <div className="mt-7 space-y-5"><div><Label htmlFor="name">Full name</Label><Input id="name" name="name" autoComplete="name" placeholder="Your full name" className="mt-2 h-12" aria-invalid={!!errors["name"]} />{errors["name"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["name"]}</p>}</div>
@@ -294,13 +321,13 @@ function Index() {
           <div><Label htmlFor="whatsapp">WhatsApp number</Label><div className="mt-2 grid grid-cols-[auto_1fr]"><span className="grid h-12 place-items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm font-bold">+91</span><Input id="whatsapp" name="whatsapp" type="tel" inputMode="numeric" maxLength={10} autoComplete="tel" placeholder="10-digit number" className="h-12 rounded-l-none" aria-invalid={!!errors["whatsapp"]} /></div>{errors["whatsapp"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["whatsapp"]}</p>}</div>
           <div><div className="flex items-start gap-3"><Checkbox id="terms" checked={terms} onCheckedChange={(v) => setTerms(v === true)} className="mt-0.5" /><Label htmlFor="terms" className="text-sm font-normal leading-5 text-muted-foreground">I agree to the terms and consent to receive access updates on WhatsApp and email.</Label></div>{errors["terms"] && <p className="mt-1.5 text-xs font-bold text-destructive">{errors["terms"]}</p>}</div>
           {Object.entries(tracking).map(([key,value]) => <input key={key} type="hidden" name={key} value={value} />)}
-          <Button type="submit" className="h-14 w-full text-base font-black shadow-cta">Join for ₹100 a Month <ArrowRight className="size-5" /></Button>
+          <Button type="submit" className="cta-gradient h-14 w-full text-base font-black shadow-cta">Buy Now — ₹100/Month <ArrowRight className="size-5" /></Button>
         </div><div className="mt-5 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-muted-foreground"><span><ShieldCheck className="mx-auto mb-1 size-4" />Secure payment</span><span><MessageCircleMore className="mx-auto mb-1 size-4" />WhatsApp confirm</span><span><Users className="mx-auto mb-1 size-4" />Limited spots</span></div>
       </form>}</div>
     </div><p className="mx-auto mt-7 max-w-xl text-center text-xs leading-5 text-muted-foreground">The Content Desk shares strategic guidance and trend research. Results vary by niche, execution and consistency.</p></section>
 
     <footer className="border-t border-border px-4 py-8 text-center text-xs text-muted-foreground">© 2026 The Content Desk · Daily marketing clarity on WhatsApp.</footer>
 
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="text-xl font-black text-primary">₹100/month</span></p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> Founding price live</p></div><Button onClick={scrollToCheckout} className="h-12 shrink-0 px-5 font-black">Join Now <ArrowRight /></Button></div></div>
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-primary/35 bg-background/95 p-3 shadow-sticky backdrop-blur md:hidden"><div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] items-center gap-3"><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground"><span className="gradient-text text-xl font-black">₹100/month</span></p><p className="flex items-center gap-1 truncate text-[10px] font-black uppercase text-primary"><Flame className="size-3" /> Founding price live</p></div><Button onClick={scrollToCheckout} className="cta-gradient h-12 shrink-0 px-5 font-black">Buy Now <ArrowRight /></Button></div></div>
   </main>;
 }
