@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Clock3,
   Flame,
-  IndianRupee,
   LockKeyhole,
   MessageCircleMore,
   Play,
@@ -59,7 +58,7 @@ const registrationSchema = z.object({
   name: z.string().trim().min(2, "Please enter your full name"),
   email: z.string().trim().email("Please enter a valid email"),
   whatsapp: z.string().regex(/^\d{10}$/, "Enter a valid 10-digit WhatsApp number"),
-  terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
+    terms: z.literal(true, { errorMap: () => ({ message: "Please accept the terms to continue" }) }),
 });
 
 const testimonials = [
